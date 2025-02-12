@@ -54,11 +54,9 @@ def get_definition_second(term):
     return None
 
 def get_definition(term):
-    # Сначала ищем на первом сайте, если не найдено — ищем в локальном файле
     definition = get_definitionFirst(term)
     if definition:
         return definition
-
     definition = get_definition_second(term)
     if definition:
         return definition
@@ -73,6 +71,8 @@ def start_bot(message):
     markup = types.InlineKeyboardMarkup()
     markup.add(types.InlineKeyboardButton("🔍 Поиск термина", callback_data="search_term"))
     bot.send_message(message.chat.id, text, reply_markup=markup)
+
+# обработка входящих сообщений
 @bot.message_handler()
 def send_text(message):
     parts = message.text.split(maxsplit=1)
@@ -85,6 +85,8 @@ def send_text(message):
     markup = types.InlineKeyboardMarkup()
     markup.add(types.InlineKeyboardButton("🔍 Искать снова", callback_data="search_term"))
     bot.send_message(message.chat.id, definition, reply_markup=markup)
+
+# обработка кнопки поиска
 @bot.message_handler(commands=['search'])
 def search_term(message):
     parts = message.text.split(maxsplit=1)
@@ -102,6 +104,7 @@ def search_term(message):
     markup.add(types.InlineKeyboardButton("🔍 Искать снова", callback_data="search_term"))
     bot.send_message(message.chat.id, definition, reply_markup=markup)
 
+# обработка команды поиска
 @bot.callback_query_handler(func=lambda call: call.data == "search_term")
 def ask_for_term(call):
     bot.send_message(call.message.chat.id, "🔍 Введите термин для поиска:")
